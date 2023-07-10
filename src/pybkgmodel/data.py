@@ -8,6 +8,7 @@ import astropy.time
 import astropy.units as u
 
 from astropy.coordinates import SkyCoord, EarthLocation, AltAz
+from astropy.coordinates.erfa_astrom import erfa_astrom, ErfaAstromInterpolator
 
 
 def find_run_neighbours(target_run, run_list, time_delta, pointing_delta):
@@ -614,7 +615,8 @@ class LstDl3EventFile(EventFile):
             'DEC_PNT':'pointing_dec'
         }
 
-        with fits.open(file_name, memmap=False) as input_file:
+        with fits.open(file_name, memmap=False) as input_file, erfa_astrom.set(ErfaAstromInterpolator(300 * u.s)) as erf:
+            print(f"Reading file {file_name}")
             try:
                 evt_head = input_file["EVENTS"].header
                 evt_data = pandas.DataFrame(input_file["EVENTS"].data)
