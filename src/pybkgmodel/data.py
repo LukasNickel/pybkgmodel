@@ -559,12 +559,12 @@ class LstDl3EventFile(EventFile):
     @classmethod
     def is_compatible(cls, file_name):
         _, ext = os.path.splitext(file_name)
-        compatible = ext.lower() == ".fits"
+        compatible = ext.lower() == ".fits.gz"
         return compatible
 
     @classmethod
     def get_obs_id(cls, file_name):
-        parsed = re.findall('.*dl3_LST-1.Run(\d+).fits', file_name)
+        parsed = re.findall('.*dl3_LST-1.Run(\d+).fits.gz', file_name)
         if parsed:
             obs_id = int(parsed[0])
         else:
