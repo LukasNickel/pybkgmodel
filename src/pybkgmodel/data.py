@@ -639,25 +639,31 @@ class LstDl3EventFile(EventFile):
                                                       ).mjd
 
                 # Compute the telescope pointing positions for each event
-                lst_time = astropy.time.Time(event_data['mjd'], format='mjd')
-                lst_loc  = EarthLocation(lat=28.761758*u.deg,
-                                         lon=-17.890659*u.deg,
-                                         height=2200*u.m)
-                alt_az_frame = AltAz(obstime=lst_time, location=lst_loc)
-                coords = SkyCoord(evt_head['RA_PNT'] *u.deg,
-                                  evt_head['DEC_PNT'] *u.deg,
-                                  frame='icrs')
+                #lst_time = astropy.time.Time(event_data['mjd'], format='mjd')
+                #lst_loc  = EarthLocation(lat=28.761758*u.deg,
+                #                         lon=-17.890659*u.deg,
+                #                         height=2200*u.m)
+                #alt_az_frame = AltAz(obstime=lst_time, location=lst_loc)
+                #coords = SkyCoord(evt_head['RA_PNT'] *u.deg,
+                #                  evt_head['DEC_PNT'] *u.deg,
+                #                  frame='icrs')
 
-                altaz_pointing =  coords.transform_to(alt_az_frame)
+                #altaz_pointing =  coords.transform_to(alt_az_frame)
 
-                event_data['pointing_zd'] = 90 - altaz_pointing.alt.to(
-                                                                        data_units['pointing_zd']
-                                                                        ).value
-                event_data['pointing_az'] = altaz_pointing.az.to(data_units['pointing_az']).value
+                #event_data['pointing_zd'] = 90 - altaz_pointing.alt.to(
+                #                                                        data_units['pointing_zd']
+                #                                                        ).value
+                #event_data['pointing_az'] = altaz_pointing.az.to(data_units['pointing_az']).value
+                # add dummy values as I am unsure if they are acessed somewhere 
+                n = len(event_data["mjd"])
+                event_data['pointing_az'] = numpy.zeros(n)
+                event_data['pointing_zd'] = numpy.zeros(n)
+
                 event_data['pointing_ra'] = [evt_head['RA_PNT']] * len(event_data['pointing_zd'])
                 event_data['pointing_ra'] = numpy.array(event_data['pointing_ra'])
                 event_data['pointing_dec'] = [evt_head['DEC_PNT']] * len(event_data['pointing_zd'])
                 event_data['pointing_dec'] = numpy.array(event_data['pointing_dec'])
+
 
             except KeyError:
                 print(f"File {file_name} corrupted or missing the Events hdu." +
