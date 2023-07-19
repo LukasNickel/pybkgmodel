@@ -59,10 +59,10 @@ class BaseMap:
             ]
             return evtfiles
         elif LstDl3EventFile.is_compatible(target_run.file_name):
-            evtfiles = [
-            LstDl3EventFile(run.file_name)
-            for run in (target_run,) + neighbours
-            ]
+            evtfiles = {
+                    run.obs_id: LstDl3EventFile(run.file_name)
+            for run in neighbours
+            }
             return evtfiles
         else:
             raise RuntimeError(f"Unsupported file format for '{target_run.file_name}'.")
@@ -128,6 +128,7 @@ class WobbleMap(BaseMap):
         self.cuts           = cuts
         self.time_delta     = time_delta
         self.pointing_delta = pointing_delta
+        self.evtfiles = self.read_runs(self.runs[0], self.runs, None)
 
     def get_runwise_bkg(self, target_run)->RectangularCameraImage:
         """Function for obtaining runwise background maps using the Wobble
@@ -150,10 +151,9 @@ class WobbleMap(BaseMap):
                                          self.pointing_delta
                                          )
 
-        evtfiles = self.read_runs(target_run = target_run,
-                                          neighbours = neighbours,
-                                          cuts = self.cuts
-                                          )
+        print(self.evtfiles.keys())
+        evtfiles = [self.evtfiles[n.obs_id] for n in neighbours]
+        print(self.evtfiles)
 
         images = [
             RectangularCameraImage.from_events(event_file,
