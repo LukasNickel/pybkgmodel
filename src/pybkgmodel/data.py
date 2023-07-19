@@ -29,18 +29,30 @@ def find_run_neighbours(target_run, run_list, time_delta, pointing_delta):
     pointing_delta: astropy.units.quantity.Quantity
         Maximal pointing difference between the target and the "neibhbour" runs.
     """
+    print("Find neighbors for run ", target_run)
 
-    neihbours = filter(
-        lambda run_: (abs(run_.mjd_start - target_run.mjd_stop)*u.d < time_delta) or
-                     (abs(run_.mjd_stop - target_run.mjd_start)*u.d < time_delta),
-        run_list
-    )
+    def time_distance(run1, run2):
+         a = abs(run1.mjd_start - run2.mjd_stop)
+         b = abs(run1.mjd_stop - run2.mjd_start)
+         return min(a, b)*u.d
 
-    neihbours = filter(
-        lambda run_: target_run.tel_pointing_start.icrs.separation(run_.tel_pointing_start.icrs)
-                     < pointing_delta,
-        neihbours
-    )
+    neihbours = [r for r in run_list if time_distance(r, target_run) < time_delta]
+    print("Candidates after time cut ", [n.obs_id for n in neihbours])
+
+#    neihbours = filter(
+#        lambda run_: (abs(run_.mjd_start - target_run.mjd_stop)*u.d < time_delta) or
+#                     (abs(run_.mjd_stop - target_run.mjd_start)*u.d < time_delta),
+#        run_list
+#    )
+
+    neihbours = [r for r in neihbours if target_run.tel_pointing_start.icrs.separation(r.tel_pointing_start.icrs) < pointing_delta]
+    print("Candidates after pointing cut ", [n.obs_id for n in neihbours])
+
+#    neihbours = filter(
+#        lambda run_: target_run.tel_pointing_start.icrs.separation(run_.tel_pointing_start.icrs)
+#                     < pointing_delta,
+#        neihbours
+#    )
 
     return tuple(neihbours)
 
