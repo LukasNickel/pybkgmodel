@@ -3,6 +3,8 @@ import argparse
 
 import yaml
 
+from astropy.coordinates.erfa_astrom import erfa_astrom, ErfaAstromInterpolator
+import astropy.units as u
 from pybkgmodel.message import message
 from pybkgmodel.processing import (RunwiseWobbleMap,
                                    StackedWobbleMap,
@@ -10,6 +12,7 @@ from pybkgmodel.processing import (RunwiseWobbleMap,
                                    StackedExclusionMap
                                     )
 
+erfa_astrom.set(ErfaAstromInterpolator(300 * u.s))
 
 def main():
     """
