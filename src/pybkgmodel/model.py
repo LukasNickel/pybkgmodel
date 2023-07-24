@@ -153,7 +153,6 @@ class WobbleMap(BaseMap):
 
         print(self.evtfiles.keys())
         evtfiles = [self.evtfiles[n.obs_id] for n in neighbours]
-        print(self.evtfiles)
 
         images = [
             RectangularCameraImage.from_events(event_file,
@@ -281,6 +280,8 @@ class ExclusionMap(BaseMap):
                                           cuts = self.cuts
                                           )
 
+        print(self.evtfiles.keys())
+        evtfiles = [self.evtfiles[n.obs_id] for n in neighbours]
         images = [
             RectangularCameraImage.from_events(event_file,
                                                self.xedges,
