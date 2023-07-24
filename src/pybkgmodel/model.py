@@ -253,6 +253,7 @@ class ExclusionMap(BaseMap):
         self.cuts           = cuts
         self.time_delta     = time_delta
         self.pointing_delta = pointing_delta
+        self.evtfiles = self.read_runs(self.runs[0], self.runs, None)
 
     def get_runwise_bkg(self, target_run)->RectangularCameraImage:
         """Function for obtaining runwise background maps using the Exclusion
