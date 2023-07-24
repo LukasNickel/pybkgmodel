@@ -732,12 +732,12 @@ class RunSummary:
 
         if len(events.mjd) != 0:
             evt_selection = [events.mjd.argmin(), events.mjd.argmax()]
+            pstart, pstop = SkyCoord(ra=events.pointing_ra[evt_selection], dec=events.pointing_dec[evt_selection], frame="icrs")
             time = astropy.time.Time(events.mjd[evt_selection], format='mjd')
-            # TODO: make location configurable.
-            lst_loc = EarthLocation(lat=28.761758*u.deg, lon=-17.890659*u.deg, height=2200*u.m)
-            alt_az_frame = AltAz(obstime=time, location=lst_loc)
-
-            pstart, pstop = SkyCoord(events.pointing_az[evt_selection], events.pointing_alt[evt_selection], frame=alt_az_frame)
+            tstart = time[0]
+            tstop = time[-1]
+            self.tstart = tstart
+            self.tstop = tstop
 
             self.__file_name = file_name
             self.__obs_id = events.obs_id
@@ -773,11 +773,13 @@ f"""{type(self).__name__} instance
 
     @property
     def mjd_start(self):
-        return self.tel_pointing_start.frame.obstime.mjd
+        return self.tstart.mjd
+#        return self.tel_pointing_start.frame.obstime.mjd
 
     @property
     def mjd_stop(self):
-        return self.tel_pointing_stop.frame.obstime.mjd
+        return self.tstop.mjd
+#        return self.tel_pointing_stop.frame.obstime.mjd
 
     @property
     def tel_pointing_start(self):
